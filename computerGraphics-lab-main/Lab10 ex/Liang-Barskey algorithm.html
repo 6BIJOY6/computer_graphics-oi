@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liang-Barsky Line Clipping</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="400" height="400"></canvas>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // Line coordinates
+        var x1 = 50, y1 = 100;
+        var x2 = 300, y2 = 300;
+
+        // Window boundaries
+        var xmin = 100, xmax = 350;
+        var ymin = 150, ymax = 250;
+
+        // Draw the line
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = 'blue';
+        ctx.stroke();
+
+        // Draw the window
+        ctx.strokeRect(xmin, ymin, xmax - xmin, ymax - ymin);
+
+        // Liang-Barsky algorithm
+        var t0 = 0, t1 = 1;
+        var dx = x2 - x1, dy = y2 - y1;
+
+        function liangBarsky() {
+            var p = [-dx, dx, -dy, dy];
+            var q = [x1 - xmin, xmax - x1, y1 - ymin, ymax - y1];
+
+            for (var i = 0; i < 4; i++) {
+                if (p[i] === 0) {
+                    if (q[i] < 0) {
+                        return false; // Line is parallel and outside the window
+                    }
+                } else {
+                    var t = q[i] / p[i];
+                    if (p[i] < 0 && t > t0) {
+                        t0 = t;
+                    } else if (p[i] > 0 && t < t1) {
+                        t1 = t;
+                    }
+                }
+            }
+
+            if (t0 < t1) {
+                var clippedX1 = x1 + t0 * dx;
+                var clippedY1 = y1 + t0 * dy;
+                var clippedX2 = x1 + t1 * dx;
+                var clippedY2 = y1 + t1 * dy;
+
+                // Draw the clipped line
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.moveTo(clippedX1, clippedY1);
+                ctx.lineTo(clippedX2, clippedY2);
+                ctx.strokeStyle = 'red';
+                ctx.stroke();
+            }
+        }
+
+        // Apply Liang-Barsky algorithm
+        liangBarsky();
+    });
+</script>
+
+</body>
+</html>

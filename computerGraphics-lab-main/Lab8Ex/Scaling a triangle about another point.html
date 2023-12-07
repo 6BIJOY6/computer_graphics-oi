@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scale Triangle About Another Point</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="400" height="400"></canvas>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // Function to translate a point (x, y) by (tx, ty)
+        function translatePoint(x, y, tx, ty) {
+            return { x: x + tx, y: y + ty };
+        }
+
+        // Function to scale a point (x, y) about another point (cx, cy)
+        function scalePoint(x, y, cx, cy, scaleX, scaleY) {
+            // Translate to the origin, scale, and then translate back
+            var translated = translatePoint(x - cx, y - cy, -cx, -cy);
+            var scaled = {
+                x: translated.x * scaleX,
+                y: translated.y * scaleY
+            };
+            return translatePoint(scaled.x, scaled.y, cx, cy);
+        }
+
+        // Function to scale a triangle [(x1, y1), (x2, y2), (x3, y3)] about a point (cx, cy)
+        function scaleTriangle(vertices, cx, cy, scaleX, scaleY) {
+            return vertices.map(function (vertex) {
+                return scalePoint(vertex[0], vertex[1], cx, cy, scaleX, scaleY);
+            });
+        }
+
+        // Triangle vertices
+        var triangleVertices = [
+            [100, 100],
+            [150, 200],
+            [200, 100]
+        ];
+
+        // Center of scaling
+        var scaleCenterX = 150;
+        var scaleCenterY = 150;
+
+        // Scaling factors
+        var scaleX = 1.5;
+        var scaleY = 2.5;
+
+        // Scale the triangle about the specified center
+        var scaledTriangle = scaleTriangle(triangleVertices, scaleCenterX, scaleCenterY, scaleX, scaleY);
+
+        // Draw the original triangle
+        ctx.beginPath();
+        ctx.moveTo(triangleVertices[0][0], triangleVertices[0][1]);
+        ctx.lineTo(triangleVertices[1][0], triangleVertices[1][1]);
+        ctx.lineTo(triangleVertices[2][0], triangleVertices[2][1]);
+        ctx.closePath();
+        ctx.strokeStyle = 'blue';
+        ctx.stroke();
+
+        // Draw the label for the original triangle
+        ctx.fillStyle = 'black';
+        ctx.fillText('Original Triangle', triangleVertices[0][0], triangleVertices[0][1] - 10);
+
+        // Draw the center of scaling
+        ctx.beginPath();
+        ctx.arc(scaleCenterX, scaleCenterY, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'blue';
+        ctx.fill();
+        ctx.closePath();
+
+        // Draw the label for the center of scaling
+        ctx.fillStyle = 'black';
+        ctx.fillText('Scale Center', scaleCenterX, scaleCenterY - 10);
+
+        // Draw the scaled triangle
+        ctx.beginPath();
+        ctx.moveTo(scaledTriangle[0][0], scaledTriangle[0][1]);
+        ctx.lineTo(scaledTriangle[1][0], scaledTriangle[1][1]);
+        ctx.lineTo(scaledTriangle[2][0], scaledTriangle[2][1]);
+        ctx.closePath();
+        ctx.strokeStyle = 'red';
+        ctx.stroke();
+
+        // Draw the label for the scaled triangle
+        ctx.fillStyle = 'black';
+        ctx.fillText('Scaled Triangle', scaledTriangle[0][0], scaledTriangle[0][1] - 10);
+    });
+</script>
+
+</body>
+</html>

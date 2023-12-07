@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotate Point About Another Point</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="400" height="400"></canvas>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // Function to rotate a point (x, y) about another point (cx, cy)
+        function rotatePoint(x, y, cx, cy, angle) {
+            var cosAngle = Math.cos(angle);
+            var sinAngle = Math.sin(angle);
+
+            var translatedX = x - cx;
+            var translatedY = y - cy;
+
+            var rotatedX = translatedX * cosAngle - translatedY * sinAngle;
+            var rotatedY = translatedX * sinAngle + translatedY * cosAngle;
+
+            return { x: rotatedX + cx, y: rotatedY + cy };
+        }
+
+        // Center point coordinates
+        var centerX = 200;
+        var centerY = 200;
+
+        // Point to rotate coordinates
+        var pointX = 250;
+        var pointY = 150;
+
+        // Angle of rotation in radians
+        var angle = Math.PI / 4; // 45 degrees
+
+        // Rotate the point about the center
+        var rotatedPoint = rotatePoint(pointX, pointY, centerX, centerY, angle);
+
+        // Draw the center point
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+        ctx.closePath();
+
+        // Draw the label for the center point
+        ctx.fillStyle = 'black';
+        ctx.fillText('Center Point', centerX, centerY - 10);
+
+        // Draw the original point
+        ctx.beginPath();
+        ctx.arc(pointX, pointY, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+        ctx.closePath();
+
+        // Draw the label for the original point
+        ctx.fillStyle = 'black';
+        ctx.fillText('Original Point', pointX, pointY - 10);
+
+        // Draw the rotated point
+        ctx.beginPath();
+        ctx.arc(rotatedPoint.x, rotatedPoint.y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'yellow';
+        ctx.fill();
+        ctx.closePath();
+
+        // Draw the label for the rotated point
+        ctx.fillStyle = 'black';
+        ctx.fillText('Rotated Point', rotatedPoint.x, rotatedPoint.y - 10);
+    });
+</script>
+
+</body>
+</html>

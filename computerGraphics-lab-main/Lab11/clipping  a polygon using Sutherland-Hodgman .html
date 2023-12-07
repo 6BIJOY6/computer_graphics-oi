@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liang-Barsky Line Clipping Algorithm</title>
+    <style>
+        #canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        function liangBarsky(x0, y0, x1, y1, xmin, ymin, xmax, ymax) {
+            let p1 = -(x1 - x0);
+            let p2 = -p1;
+            let p3 = -(y1 - y0);
+            let p4 = -p3;
+
+            let q1 = x0 - xmin;
+            let q2 = xmax - x0;
+            let q3 = y0 - ymin;
+            let q4 = ymax - y0;
+
+            let posarr = [];
+            let negarr = [];
+            let tE = 0;
+            let tL = 1;
+
+            // Calculate intersection parameters
+            let t = q1 / p1;
+            if (p1 < 0) {
+                if (t > tE) tE = t;
+            } else if (p1 > 0) {
+                if (t < tL) tL = t;
+            }
+
+            t = q2 / p2;
+            if (p2 < 0) {
+                if (t > tE) tE = t;
+            } else if (p2 > 0) {
+                if (t < tL) tL = t;
+            }
+
+            t = q3 / p3;
+            if (p3 < 0) {
+                if (t > tE) tE = t;
+            } else if (p3 > 0) {
+                if (t < tL) tL = t;
+            }
+
+            t = q4 / p4;
+            if (p4 < 0) {
+                if (t > tE) tE = t;
+            } else if (p4 > 0) {
+                if (t < tL) tL = t;
+            }
+
+            // Check if line is outside the window
+            if (tE > tL) {
+                return false;
+            }
+
+            // Calculate clipped endpoints
+            let x0c = x0 + tE * (x1 - x0);
+            let y0c = y0 + tE * (y1 - y0);
+            let x1c = x0 + tL * (x1 - x0);
+            let y1c = y0 + tL * (y1 - y0);
+
+            // Draw the clipped line
+            ctx.beginPath();
+            ctx.moveTo(x0c, y0c);
+            ctx.lineTo(x1c, y1c);
+            ctx.strokeStyle = "green";
+            ctx.stroke();
+
+            return true;
+        }
+
+        const x0 = 50;
+        const y0 = 100;
+        const x1 = 250;
+        const y1 = 300;
+        const xmin = 100;
+        const ymin = 50;
+        const xmax = 200;
+        const ymax = 200;
+
+        // Draw the original line
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.strokeStyle = "red";
+        ctx.stroke();
+
+        // Draw the clipping window
+        ctx.beginPath();
+        ctx.rect(xmin, ymin, xmax - xmin, ymax - ymin);
+        ctx.strokeStyle = "blue";
+        ctx.stroke();
+
+
+        // Apply Liang-Barsky algorithm for line clipping
+        liangBarsky(x0, y0, x1, y1, xmin, ymin, xmax, ymax);
+    </script>
+</body>
+</html>

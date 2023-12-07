@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scale Triangle About Origin</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="400" height="400"></canvas>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // Function to scale a point (x, y) about the origin (0, 0)
+        function scalePoint(x, y, scaleX, scaleY) {
+            var scaledX = x * scaleX;
+            var scaledY = y * scaleY;
+            return { x: scaledX, y: scaledY };
+        }
+
+        // Function to scale a triangle [(x1, y1), (x2, y2), (x3, y3)] about the origin
+        function scaleTriangle(vertices, scaleX, scaleY) {
+            return vertices.map(function (vertex) {
+                return scalePoint(vertex[0], vertex[1], scaleX, scaleY);
+            });
+        }
+
+        // Triangle vertices
+        var triangleVertices = [
+            [50, 50],
+            [100, 100],
+            [150, 50]
+        ];
+
+        // Scaling factors
+        var scaleX = 2;
+        var scaleY = 3;
+
+        // Scale the triangle about the origin
+        var scaledTriangle = scaleTriangle(triangleVertices, scaleX, scaleY);
+
+        // Draw the original triangle
+        ctx.beginPath();
+        ctx.moveTo(triangleVertices[0][0], triangleVertices[0][1]);
+        ctx.lineTo(triangleVertices[1][0], triangleVertices[1][1]);
+        ctx.lineTo(triangleVertices[2][0], triangleVertices[2][1]);
+        ctx.closePath();
+        ctx.strokeStyle = 'blue';
+        ctx.stroke();
+
+        // Draw the label for the original triangle
+        ctx.fillStyle = 'black';
+        ctx.fillText('Original Triangle', triangleVertices[0][0], triangleVertices[0][1] - 10);
+
+        // Draw the scaled triangle
+        ctx.beginPath();
+        ctx.moveTo(scaledTriangle[0].x, scaledTriangle[0].y);
+        ctx.lineTo(scaledTriangle[1].x, scaledTriangle[1].y);
+        ctx.lineTo(scaledTriangle[2].x, scaledTriangle[2].y);
+        ctx.closePath();
+        ctx.strokeStyle = 'red';
+        ctx.stroke();
+
+        // Draw the label for the scaled triangle
+        ctx.fillStyle = 'black';
+        ctx.fillText('Scaled Triangle', scaledTriangle[0].x, scaledTriangle[0].y - 10);
+    });
+</script>
+
+</body>
+</html>

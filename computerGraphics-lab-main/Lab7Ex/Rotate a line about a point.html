@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotate Line About a Point</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="400" height="400"></canvas>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // Function to rotate a point (x, y) about another point (cx, cy)
+        function rotatePoint(x, y, cx, cy, angle) {
+            var cosAngle = Math.cos(angle);
+            var sinAngle = Math.sin(angle);
+
+            var translatedX = x - cx;
+            var translatedY = y - cy;
+
+            var rotatedX = translatedX * cosAngle - translatedY * sinAngle;
+            var rotatedY = translatedX * sinAngle + translatedY * cosAngle;
+
+            return { x: rotatedX + cx, y: rotatedY + cy };
+        }
+
+        // Function to rotate a line (x1, y1, x2, y2) about a point (cx, cy)
+        function rotateLine(x1, y1, x2, y2, cx, cy, angle) {
+            var rotatedStart = rotatePoint(x1, y1, cx, cy, angle);
+            var rotatedEnd = rotatePoint(x2, y2, cx, cy, angle);
+            return { x1: rotatedStart.x, y1: rotatedStart.y, x2: rotatedEnd.x, y2: rotatedEnd.y };
+        }
+
+        // Center point coordinates
+        var centerX = 200;
+        var centerY = 200;
+
+        // Line endpoints
+        var lineStartX = 150;
+        var lineStartY = 150;
+        var lineEndX = 250;
+        var lineEndY = 150;
+
+        // Angle of rotation in radians
+        var angle = Math.PI / 2; // 90 degrees
+
+        // Rotate the line about the center
+        var rotatedLine = rotateLine(lineStartX, lineStartY, lineEndX, lineEndY, centerX, centerY, angle);
+
+        // Draw the center point
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'blue';
+        ctx.fill();
+        ctx.closePath();
+
+        // Draw the label for the center point
+        ctx.fillStyle = 'black';
+        ctx.fillText('Center Point', centerX, centerY - 10);
+
+        // Draw the original line
+        ctx.beginPath();
+        ctx.moveTo(lineStartX, lineStartY);
+        ctx.lineTo(lineEndX, lineEndY);
+        ctx.strokeStyle = 'blue';
+        ctx.stroke();
+        ctx.closePath();
+
+        // Draw the label for the original line
+        ctx.fillStyle = 'black';
+        ctx.fillText('Original Line', lineStartX, lineStartY - 10);
+
+        // Draw the rotated line
+        ctx.beginPath();
+        ctx.moveTo(rotatedLine.x1, rotatedLine.y1);
+        ctx.lineTo(rotatedLine.x2, rotatedLine.y2);
+        ctx.strokeStyle = 'red';
+        ctx.stroke();
+        ctx.closePath();
+
+        // Draw the label for the rotated line
+        ctx.fillStyle = 'black';
+        ctx.fillText('Rotated Line', rotatedLine.x1, rotatedLine.y1 - 10);
+    });
+</script>
+
+</body>
+</html>

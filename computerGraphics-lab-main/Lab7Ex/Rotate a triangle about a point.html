@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotate Triangle About a Point</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="400" height="400"></canvas>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // Function to rotate a point (x, y) about another point (cx, cy)
+        function rotatePoint(x, y, cx, cy, angle) {
+            var cosAngle = Math.cos(angle);
+            var sinAngle = Math.sin(angle);
+
+            var translatedX = x - cx;
+            var translatedY = y - cy;
+
+            var rotatedX = translatedX * cosAngle - translatedY * sinAngle;
+            var rotatedY = translatedX * sinAngle + translatedY * cosAngle;
+
+            return { x: rotatedX + cx, y: rotatedY + cy };
+        }
+
+        // Function to rotate a triangle [(x1, y1), (x2, y2), (x3, y3)] about a point (cx, cy)
+        function rotateTriangle(vertices, cx, cy, angle) {
+            var rotatedVertices = vertices.map(function (vertex) {
+                return rotatePoint(vertex[0], vertex[1], cx, cy, angle);
+            });
+
+            return rotatedVertices;
+        }
+
+        // Center point coordinates
+        var centerX = 200;
+        var centerY = 200;
+
+        // Triangle vertices
+        var triangleVertices = [
+            [150, 150],
+            [200, 100],
+            [250, 150]
+        ];
+
+        // Angle of rotation in radians
+        var angle = Math.PI / 2; // 90 degrees
+
+        // Rotate the triangle about the center
+        var rotatedTriangle = rotateTriangle(triangleVertices, centerX, centerY, angle);
+
+        // Draw the center point
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'blue';
+        ctx.fill();
+        ctx.closePath();
+
+        // Draw the label for the center point
+        ctx.fillStyle = 'black';
+        ctx.fillText('Center Point', centerX, centerY - 10);
+
+        // Draw the original triangle
+        ctx.beginPath();
+        ctx.moveTo(triangleVertices[0][0], triangleVertices[0][1]);
+        ctx.lineTo(triangleVertices[1][0], triangleVertices[1][1]);
+        ctx.lineTo(triangleVertices[2][0], triangleVertices[2][1]);
+        ctx.closePath();
+        ctx.strokeStyle = 'blue';
+        ctx.stroke();
+
+        // Draw the label for the original triangle
+        ctx.fillStyle = 'black';
+        ctx.fillText('Original Triangle', triangleVertices[0][0], triangleVertices[0][1] - 10);
+
+        // Draw the rotated triangle
+        ctx.beginPath();
+        ctx.moveTo(rotatedTriangle[0].x, rotatedTriangle[0].y);
+        ctx.lineTo(rotatedTriangle[1].x, rotatedTriangle[1].y);
+        ctx.lineTo(rotatedTriangle[2].x, rotatedTriangle[2].y);
+        ctx.closePath();
+        ctx.strokeStyle = 'red';
+        ctx.stroke();
+
+        // Draw the label for the rotated triangle
+        ctx.fillStyle = 'black';
+        ctx.fillText('Rotated Triangle', rotatedTriangle[0].x, rotatedTriangle[0].y - 10);
+    });
+</script>
+
+</body>
+</html>
